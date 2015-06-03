@@ -62,6 +62,90 @@ and open the template in the editor.
 	    console.log(β);
 	    
 	    
+	    
+	    // TODO
+	    
+	    // every node in the network is either S (susceptible) or I (infected)
+	    // t is discrete
+	    // each time step all the nodes contacts synchronously with all of its neighbors
+	    
+	    
+	    // struct or class
+	    var node = {
+		id : '',
+		neighbors: [],
+		infected: true
+	    };
+	    
+	    function node(id, infected){
+		this.id = id;
+		this.infected = infected;
+		this.neighbors = [];
+		this.addNeighbor = function(item){
+		    this.neighbors.push(item);
+		};
+	    };
+	    
+	    
+	    var nodes = []; // stack of nodes
+	    // generate n nodes
+	    
+	    
+	    var network = []; // network of nodes
+	    // append n nodes to the network and setup the neighbors with the
+	    // infections...
+	    // 
+	    
+	    
+	    // each node is a new NodeClass
+	    
+	    // consider the priminary warm up
+	    // then consider the following stationary state
+	    // we want to consider the stationary state
+	    
+	    
+	    // initial conditions and temporal evolutions, up to 1000
+	    // repeat each evaluations many times, up to 100
+	    
+	    // the final value of p is an average of averages /over time steps/
+	    
+	    // the monte carlo simulation requires some extra parameters
+	    
+	    // the best way todo this is with matlab
+	    
+	    
+	    // -- 
+	    
+	    // crear el modelo i utilizar ficheros pajek(net) o json
+	    
+	    // 
+	    
+	    parsePajek = function(){
+		// cal convertir a json??
+		
+	    };
+	    
+	    parseJSON = function(){
+		// directament utilizar les dades per generar els modes
+		
+	    };
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
 	</script>
 
     </body>
