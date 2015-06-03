@@ -36,6 +36,33 @@ and open the template in the editor.
 	    }
 	</style>    </head>
     <body>
-	<div>TODO write content</div>
+	<div>
+	    <h1>Monte Carlo Simulation of SIS epidemic spreading</h1>
+
+
+
+
+
+	</div>
+	<script>
+
+	    var Nrep = 100; // number of repetitions
+	    var p0 = 0.2; // initial fraction of infected nodes
+	    var Tmax = 1000; // maximum number of times steps of each simulation
+	    var Ttrans = 900; // number of steps of the transitory
+	    var Tstationary = Tmax - Ttrans; // 100 used for the calculation of <p>
+
+
+	    var μ = 0; //spontaneuos recovery probability
+	    var β = 0; // infection probability of suseptible (S) individuals when it is contacted by an infected (I) one
+	    
+	    // (S): suseceptible
+	    // (I): infected
+	    console.log(μ);
+	    console.log(β);
+	    
+	    
+	</script>
+
     </body>
 </html>
