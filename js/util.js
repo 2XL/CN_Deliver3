@@ -205,6 +205,13 @@ function partitionToCluster(dataJSON, nameDownload) {
 }
 // var str = JSON.stringify(obj, null, 2); // spacing level = 2
 
+function downloadString(str, name){
+    var blob = new Blob([str], {type:'text/plain'});
+    saveAs(blob,name);
+}
+
+
+
 function syntaxHighlight(json) {
     if (typeof json != 'string') {
 	json = JSON.stringify(json, undefined, 2);
@@ -226,3 +233,7 @@ function syntaxHighlight(json) {
 	return '<span class="' + cls + '">' + match + '</span>';
     });
 }
+
+
+
+

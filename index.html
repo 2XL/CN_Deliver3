@@ -7,15 +7,19 @@ and open the template in the editor.
 <html>
     <head>
 	<title>CN Deliver 3</title>
-	<link rel="shortcut icon" href="favicon.ico" >
-	<link rel="icon" href="obrasinf.gif" type="image/gif" >
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="js/jquery/jquery.js"></script>
-	<script src="js/twitter-bootstrap/js/bootstrap.js"></script>
+	<link rel="shortcut icon" href="favicon.ico" >
+	<link rel="icon" href="obrasinf.gif" type="image/gif" >
 	<link rel="stylesheet" href="js/twitter-bootstrap/css/bootstrap.css">
 	<link rel="stylesheet" href="css/style.css">
-	
+	<script src="js/jquery/jquery.js"></script>
+	<script src="js/twitter-bootstrap/js/bootstrap.js"></script>
+	<script src="js/util.js"></script>
+	<script src="js/script.js"></script>
+	<script src="js/FileSaver.js"></script>
+	<script src="js/papaparse.js"></script>
+
 	<style>
 	    .box-content {
 		display: inline-block;
@@ -38,105 +42,291 @@ and open the template in the editor.
 	</div>
 	<script>
 
-	    var Nrep = 100; // number of repetitions
-	    var p0 = 0.2; // initial fraction of infected nodes
+	    /*
+	     * Run Setting
+	     *  beta: [0, 100] , +2 or +1
+	     *  gama: [0.1,0.5,0.9]
+	     */
+
+
+	    var Nrep = 5; // number of repetitions // 100
+	    var p0 = 0.5; // initial fraction of infected nodes
 	    var Tmax = 1000; // maximum number of times steps of each simulation
+
 	    var Ttrans = 900; // number of steps of the transitory
 	    var Tstationary = Tmax - Ttrans; // 100 used for the calculation of <p>
 
-
-	    var μ = 0; //spontaneuos recovery probability
-	    var β = 0; // infection probability of suseptible (S) individuals when it is contacted by an infected (I) one
-	    
+	    var μ = 0;
+	    var μlist = [0.1, 0.5, 0.9]; //spontaneuos recovery probability
+	    // var β = 0.2; // infection probability of suseptible (S) individuals when it is contacted by an infected (I) one
+	    var βlist = [];
+	    for (var i = 0; i < 100; i += 2) {
+		βlist.push(i / 100);
+	    }
 	    // (S): suseceptible
 	    // (I): infected
-	    console.log(μ);
-	    console.log(β);
-	    
-	    
-	    
+	    console.log(μlist[μ]);
+	    console.log(βlist); // not used, we use all the list of candidates
+
 	    // TODO
-	    
+
 	    // every node in the network is either S (susceptible) or I (infected)
 	    // t is discrete
 	    // each time step all the nodes contacts synchronously with all of its neighbors
-	    
-	    
+
 	    // struct or class
-	    var node = {
-		id : '',
-		neighbors: [],
-		infected: true
-	    };
-	    
-	    function node(id, infected){
+	    function Node(id, infected) {
 		this.id = id;
 		this.infected = infected;
 		this.neighbors = [];
-		this.addNeighbor = function(item){
+		this.addNeighbor = function (item) {
 		    this.neighbors.push(item);
 		};
-	    };
-	    
-	    
-	    var nodes = []; // stack of nodes
-	    // generate n nodes
-	    
-	    
-	    var network = []; // network of nodes
+		this.setInfected = function (bool) {
+		    if (this.infected === bool) {
+			return false;
+		    } else {
+			this.infected = bool;
+		    }
+		    return true;
+		};
+		this.tryRecover = function (prob) {
+		    if (Math.random() < prob) {
+			this.infected = false;
+			// console.log("healed");
+		    }
+		};
+		this.tryInfect = function (prob) {
+		    if (Math.random() < prob) {
+			this.infected = true;
+
+			// console.log("infected");
+		    }
+		};
+	    }
+	    var network = {}; // network of nodes, and its relations...
 	    // append n nodes to the network and setup the neighbors with the
 	    // infections...
 	    // 
-	    
-	    
 	    // each node is a new NodeClass
-	    
 	    // consider the priminary warm up
 	    // then consider the following stationary state
 	    // we want to consider the stationary state
-	    
-	    
 	    // initial conditions and temporal evolutions, up to 1000
 	    // repeat each evaluations many times, up to 100
-	    
 	    // the final value of p is an average of averages /over time steps/
-	    
 	    // the monte carlo simulation requires some extra parameters
-	    
 	    // the best way todo this is with matlab
-	    
-	    
 	    // -- 
-	    
 	    // crear el modelo i utilizar ficheros pajek(net) o json
-	    
 	    // 
-	    
-	    
-	    
-	    parsePajek = function(){
-		// cal convertir a json??
-		
-	    };
-	    
-	    parseJSON = function(){
-		// directament utilizar les dades per generar els modes
-		
-	    };
-	    
-	    
-	    
+	    //	    0			    1			    2			    3			4
+	    var paths = ['data/graphPAJEK/', 'data/networks/real/', 'data/networks/model/', 'data/networks/test/', 'data/networks/toy/'];
+	    // choose which file and reverse pick it
+	    var path = paths[1];
+
+	    var fileName = 'zachary_unwh';
+	    var fileExt = '.net';
+	    var fullPath = path + fileName + fileExt;
+
+	    loadNET(fullPath, function (data) {
+		// console.log(data);
+		var graph = pajekToJSON(data);
+		console.log(graph);
+		/*
+		 * graph.Edges :: array
+		 * graph.Vertices :: array
+		 */
+		graph.Vertices.forEach(function (vertex) {
+		    network[vertex] = new Node(vertex, false); //no estan infectats al inici
+		});
+		graph.Edges.forEach(function (edge) {
+		    // console.log(edge);
+		    network[edge.source].addNeighbor(network[edge.target]);
+		});
+		// simulateSIS(network);
+		resultSIS = {};
+		/*
+		 βlist.map(function (β) {
+		 return simulateSIS(network, Tmax, Ttrans, μ, β, Nrep, p0);
+		 });
+		 */
+		for (var β in βlist) {
+		    resultSIS[βlist[β]] = simulateSIS(network, Tmax, Ttrans, μlist[μ], βlist[β], Nrep, p0);
+		}
+
+
+		// download data as json:
+		// downloadJSON(resultSIS, 'sis-'+fileName+'.json');
+
+
+		// downloadJSON(csv, 'sis-'+fileName+'.csv');
+		parseToCSV(resultSIS, Tmax, Object.keys(network).length, path + fileName + '_' + μlist[μ] + '_' + p0 + '_' + Tmax + '.csv');
+
+		// untitled2 = untitled.'
+		// plot(untitled2(:,:),'DisplayName','untitled(1,:)','YDataSource','untitled(1,:)');figure(gcf)
+
+		// todo with matlab...
+		// simulateSISplot(data);
+
+
+
+	    });
+
+	    function simulateSIS(network, tMax, tTrans, pRecover, pInfect, nRep, p0) {
+		var result = simulateSISreps(network, tMax, tTrans, pRecover, pInfect, nRep);
+		// sintetitzar els resultats
+		sis = result.map(function (item) {
+		    return item.map(function (item) {
+			return item.reduce(function (sum, current) {
+			    if (current)
+				sum++;
+			    return sum;
+			}, 0);
+		    });
+		});
+
+		sis = sis.map(function (rep) {
+		    return rep.map(function (item) {
+			return item; // infected
+
+		    });
+		});
+		// reduce matrix
+		sisAVG = makeArrayOf(tMax, 0);
+
+		sis.forEach(function (item) {
+		    item.forEach(function (val, idx) {
+			sisAVG[idx] += val;
+		    });
+		});
+
+		return sisAVG.map(function (item) {
+		    return Math.round(item / nRep);
+		});
+
+		// ME ESTAN HACIENDO PANTALLAZOS EN TIEMPO REAL!!!! :D
+		// mi pc laguea i esto no es normal... se ven puntos entre los
+		// caracteres . CIA? ?? 
+
+		// sis is an array with the amount of items infected
+		// console.log(JSON.stringify(sis, 0, 1, null));
+		// return sis;
+
+	    }
+	    // retorna una repetició // es crida 1 vegada i executa 
+	    function simulateSISreps(network, tMax, tTrans, pRecover, pInfect, nRep) {
+
+
+		// each step
+		// p0
+
+		// infect initial 20%
+		var toInfect = Object.keys(network).length * p0;
+		var keys = Object.keys(network);
+
+		var infected = [];
+		while (toInfect > 0) {
+
+		    //pick a key
+		    var key = keys[Math.floor(Math.random() * keys.length)];
+		    if (network[key].setInfected(true))
+		    {
+			toInfect--;
+			infected.push(key);
+		    }
+		}
+		console.log("Initial Infected: " + infected.length);
+
+
+
+		console.log("simulateSISreps: " + pInfect);
+
+		var reps = makeArrayOf(nRep);
+		return reps.map(function () {
+
+		    var result = simulateSISsteps(network, tMax, tTrans, pRecover, pInfect);
+		    // restart infection
+		    keys.map(function (item) {
+			network[item].setInfected(false);
+		    });
+		    infected.map(function (item) {
+			network[item].setInfected(true);
+		    });
+
+		    return result;
+		});
+	    }
+	    // retorna un pas
+	    function simulateSISsteps(network, tMax, tTrans, pRecover, pInfect) {
+		console.log("simulateSISsteps: " + pInfect);
+		var steps = makeArrayOf(tMax); // store all for the graph
+
+		return steps.map(function () {
+		    // console.log(item, idx, all);		   
+		    // generate a random number and recover try it
+		    // infect the neighbors, all nodes contacts to its neighbors
+		    Object.keys(network).map(function (item) {
+			if (network[item].infected) {
+			    network[item].neighbors.map(function (item) {
+				if (item.infected) {
+				    // already infected
+				} else {
+				    item.tryInfect(pInfect); // try to infect it
+				}
+			    });
+			}
+		    });
+		    // report infection rate?
+		    var result = Object.keys(network).map(function (item) {
+			return network[item].infected;
+		    });
+		    // recover for the following step...
+		    Object.keys(network).map(function (item) {
+			network[item].tryRecover(pRecover);
+		    });
+		    return result;
+		});
+	    }
+
+
+	    // inicialitzar el network amb instances de nodes
+	    /*
+	     
+	     */
+
 	    // todo convert he data form the fiels of the directory data/* 
 	    // into a object to be handled by js controller then loop through all the steps
 	    // to simulate all the behaviour expected from the SIS
-	    
+
 	    // TODO tommorow morning
-	    
-	    
-	    
-	    
+
+	    function simulateSISplot(data) {
+
+	    }
+
+	    function parseToCSV(data, steps, nodes, name) {
+		// object
+		// each key   : probability
+		// each value : steps [0...1000....etc]; 
+
+		var str = 'step';
+
+		for (var i = 0; i < steps; i++)
+		    str += ',' + i;
+		str += '\n';
+		for (var item in data)
+		{
+		    str += item;
+		    for (var step in data[item]) {
+			str += ',' + data[item][step] / nodes;
+		    }
+		    str += '\n';
+		}
+		downloadString(str, name);
+	    }
+
 	</script>
-	<script src="js/util.js"></script>
-	<script src="js/script.js"></script>
+
     </body>
 </html>
