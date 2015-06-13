@@ -55,7 +55,7 @@ and open the template in the editor.
 	    // choose which file and reverse pick it
 	    var pathIdx = 0;
 	    var path = paths[pathIdx];
-	    var fileName = 'S1000-D8'; /***/
+	    var fileName = 'S500-D8'; /***/
 	     
 	    // TODO 0 graphPAJEK
 	    // D4, D6, D8
@@ -63,7 +63,7 @@ and open the template in the editor.
 	    // μ 0, 1, 2
 	    
 	    /*
-	     * DONE 
+	     * DONE - S1000 
 	     * D4 5 0	-
 	     * D4 5 1	-
 	     * D4 5 2	-
@@ -73,6 +73,21 @@ and open the template in the editor.
 	     * D8 50 0 -
 	     * D8 50 1
 	     * D8 10 2	-
+	     * DONE - S500
+	     * D8 50 0	    x
+	     * D8 50 1	    x
+	     * D8 50 2	    x
+	     * D6 50 0	    x
+	     * D6 50 1	    x
+	     * D6 50 2
+ 	     * D4 50 0	    x
+	     * D4 50 1	    x
+	     * D4 50 2
+	     * DONE - S100
+	     * D6 1	0 -
+	     * D6 10	0 - 
+	     * D6 50	0 -
+	     *
 	     */
 	    
 	    
@@ -123,7 +138,7 @@ and open the template in the editor.
 	    var Ttrans = 900; // number of steps of the transitory
 	    var Tstationary = Tmax - Ttrans; // 100 used for the calculation of <p>
 
-	    var μ = 0; //spontaneuos recovery probability
+	    var μ = 2; //spontaneuos recovery probability
 	    var μlist = [0.1, 0.5, 0.9];
 	    // var β = 0.2; // infection probability of suseptible (S) individuals when it is contacted by an infected (I) one
 	    var βlist = [];
@@ -213,7 +228,7 @@ and open the template in the editor.
 	    var fullPath = path + fileName + fileExt;
 
 	    loadNET(fullPath, function (data) {
-		// console.log(data);
+		 console.log(data);
 		var graph = pajekToJSON(data);
 		// console.log(graph);
 		/*
