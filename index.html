@@ -39,13 +39,84 @@ and open the template in the editor.
 	</div>
 	<script>
 
+
+
 	    /*
 	     * Run Setting
 	     *  beta: [0, 100] , +2 or +1
 	     *  gama: [0.1,0.5,0.9]
 	     */
+
+    
+    	    /*************************/
+	    /*************************/
+	    //		0			    1			    2			    3			4
+	    var paths = ['data/graphPAJEK/', 'data/networks/real/', 'data/networks/model/', 'data/networks/test/', 'data/networks/toy/'];
+	    // choose which file and reverse pick it
+	    var pathIdx = 0;
+	    var path = paths[pathIdx];
+	    var fileName = 'S1000-D8'; /***/
+	     
+	    // TODO 0 graphPAJEK
+	    // D4, D6, D8
+	    // Nrep 5
+	    // μ 0, 1, 2
 	    
-	    var Nrep = 2; // number of repetitions // 100 -> 50
+	    /*
+	     * DONE 
+	     * D4 5 0	-
+	     * D4 5 1	-
+	     * D4 5 2	-
+	     * D6 10 0	-
+	     * D6 10 1  -
+	     * D6 10 2	-
+	     * D8 50 0 -
+	     * D8 50 1
+	     * D8 10 2	-
+	     */
+	    
+	    
+	    // TODO 1 REAL
+	    // airports_UW
+	    // cat_cortex_sim
+	    // dolphins
+	    // football
+	    // zachary_unwh
+	    // Nrep 5
+	    // μ 0, 1, 2
+	    
+	    /*
+	     * airports_UW 1 0  - 
+	     * airports_UW 10 0 -
+	     * airports_UW 5 1
+	     * airports_UW 5 2
+	     * cat_cortex_sim 5 0
+	     * cat_cortex_sim 5 1
+	     * cat_cortex_sim 5 2
+	     * dolphins 5 0
+	     * dolphins 5 1
+	     * dolphins 5 2
+	     * football 50 0 - too small
+	     * football 50 1 - 
+	     * football 50 2 
+	     * zachary_unwh 50 0  - too small
+	     * zachary_unwh 50 1  - too small
+	     * zachary_unwh 50 2  - too small
+	     */
+	    
+	     // TODO 3 TEST
+	     /*
+	      * 256_4_4_2_15_18_p 10 0 -
+	      * 256_4_4_2_15_18_p 10 1 -
+	      * 256_4_4_2_15_18_p 10 2 - 
+	      * 256_4_4_4_13_18_p 10 0 -
+	      * 256_4_4_4_13_18_p 10 1 - 
+	      * 256_4_4_4_13_18_p 10 2 -
+	      * 
+	      */
+
+	    
+	    var Nrep = 50; // number of repetitions // 100 -> 50
 	    var p0 = 0.2; // initial fraction of infected nodes
 	    var Tmax = 1000; // maximum number of times steps of each simulation
 
@@ -59,6 +130,14 @@ and open the template in the editor.
 	    for (var i = 0; i <= 100; i += 2) {
 		βlist.push(i / 100);
 	    }
+	    
+	    
+	    /*************************/
+	    /*************************/
+	    
+	    
+	    
+	    
 	    // (S): suseceptible
 	    // (I): infected
 	    console.log(μlist[μ]); // recovery
@@ -129,12 +208,6 @@ and open the template in the editor.
 	    // -- 
 	    // crear el modelo i utilizar ficheros pajek(net) o json
 	    // 
-	    //		0			    1			    2			    3			4
-	    var paths = ['data/graphPAJEK/', 'data/networks/real/', 'data/networks/model/', 'data/networks/test/', 'data/networks/toy/'];
-	    // choose which file and reverse pick it
-
-	    var path = paths[0];
-	    var fileName = 'S1000-D2'; /***/
 
 	    var fileExt = '.net';
 	    var fullPath = path + fileName + fileExt;
@@ -173,7 +246,7 @@ and open the template in the editor.
 
 		// downloadJSON(csv, 'sis-'+fileName+'.csv');
 		//**
-		parseToCSV(resultSIS, Tmax, Object.keys(network).length, path + fileName + '_μ' + μlist[μ] + '_p0' + p0 + '_Tmax' + Tmax + '.csv');
+		parseToCSV(resultSIS, Tmax, Object.keys(network).length, path + fileName +'_r'+Nrep + '_μ' + μlist[μ] + '_p0' + p0 + '_Tmax' + Tmax + '.csv');
 
 		// untitled2 = untitled.'
 		// plot(untitled2(:,:),'DisplayName','untitled(1,:)','YDataSource','untitled(1,:)');figure(gcf)
